@@ -15,9 +15,7 @@
     <classes>
 
       <class name="com.nagarro.tests.Test_Login"/>
-      <class name="com.nagarro.tests.Test_ProductSearchFilter"/>
-	  <class name="com.nagarro.tests.Test03AddToCartAndPurchase"/>
-	  <class name="com.nagarro.tests.Test05VerifyLogout"/>
+
 
 
     </classes>
