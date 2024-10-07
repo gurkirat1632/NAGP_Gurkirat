@@ -1,0 +1,136 @@
+package com.nagarro.base;
+
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.Map;
+import java.util.Properties;
+
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Parameters;
+
+import com.aventstack.extentreports.ExtentTest;
+import com.nagarro.config.Configs;
+import com.nagarro.config.Constants;
+import com.nagarro.pages.LoginPage;
+import com.nagarro.utils.project.Util_Lib;
+import com.nagarro.utils.reporting.AssertionLog;
+import com.nagarro.utils.reporting.ExtentReportLogger;
+import com.nagarro.utils.reporting.ExtentReportManager;
+import com.nagarro.utils.web.DriverFactory;
+import com.nagarro.utils.web.Web_Lib;
+
+public class BaseClass {
+
+    // public WebDriver driver;
+    public LoginPage loginPage;
+
+    public ExtentTest          test;
+    public AssertionLog        assertionLog;
+    public ExtentReportLogger  logger;
+    public ExtentReportManager reportManger;
+    public Properties          properties;
+    public Web_Lib             webLib;
+
+    /****
+     * Description : this function will be run before every test method, this will launch browser and then initialize all the page objects Usage : none
+     * parameter: method : the method paramenter to get information regarding the test method run
+     */
+    @Parameters("browser")
+    @BeforeMethod(alwaysRun = true)
+    public void beforeEveryMethod(final Method method, final String browser) {
+        System.out.println("Before method from base class");
+        launchBrowser(browser);
+        DriverFactory.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(Configs.implicitTimeout));
+        DriverFactory.getDriver().manage().window().maximize();
+        DriverFactory.getDriver().get(Configs.getPropertyConfig(Constants.URL.getValue().toString()));
+
+        assertionLog = new AssertionLog(method.getName());
+        logger = new ExtentReportLogger(DriverFactory.getDriver(), method.getName());
+        webLib = new Web_Lib(DriverFactory.getDriver(), logger);
+        // below objects can b movmoved to respective test classes
+        loginPage = new LoginPage(assertionLog, logger);
+
+    }
+
+    /****
+     * Description : this function will be run after every test method, this will do required jobs like flushing report after every scenario and checking if
+     * scenarios have passed or failed Usage : none parameter: ITestResult result : to get result of testmethod
+     */
+    @AfterMethod(alwaysRun = true)
+    public void afterMethod(final ITestResult result) {
+        System.out.println("After method from base class");
+        final Map<Object, Object> resultTest = ExtentReportManager.getScenarioResult().getResult();
+        if (Integer.valueOf(resultTest.get(Constants.FAILED.getValue()).toString()) > 0) {
+            result.setStatus(2);
+        }
+        System.out.println(result.getStatus());
+        markTestBasedOnStatus(result);
+        logResultCounts(resultTest); // in extent report
+        DriverFactory.getDriver().quit();
+        ExtentReportManager.flushReport();
+    }
+
+    /****
+     * Description : this function will mark test case as failed or passed in extent report Usage : none parameter: ITestResult result : to get result of
+     * testmethod
+     */
+    public void markTestBasedOnStatus(final ITestResult result) {
+        if (result.getStatus() == ITestResult.FAILURE) {
+            logger.logFail(result.getThrowable(), "Test case has been failed.");
+        } else if (result.getStatus() == ITestResult.SKIP) {
+            logger.logSkipped(result.getThrowable(), "Test case has been skipped.");
+        } else {
+            System.out.println("Test case already passed"); // no need to log again
+        }
+    }
+
+    /****
+     * Description : this function will log the steps results in extent report Usage : none parameter: result : result map with information
+     */
+    public void logResultCounts(final Map<Object, Object> result) {
+        final String[][] data = { { "Passed Steps", result.get("Passed").toString() }, { "Failed Steps", result.get("Failed").toString() },
+                { "Warning Steps", result.get("Warning").toString() } };
+        logger.logTable(data, "");
+
+    }
+
+    /****
+     * Description : this function will run before suite, this will start the extent reports Usage : none
+     */
+    @BeforeSuite(alwaysRun = true)
+    public void setExtentReport() {
+        Util_Lib.moveResults();
+        ExtentReportManager.initializeReporter();
+    }
+
+    /****
+     * Description : this function will start the test Usage : parameter: strName : name of test case to be printed in extent report strDesc: description for
+     * test
+     */
+    public ExtentTest startTest(final String strName, final String strDesc) {
+        return ExtentReportManager.startTest(strName, strDesc);
+    }
+
+    /****
+     * Description : this function will launch the browser, based on input from config file Usage :
+     */
+
+    public WebDriver launchBrowser() {
+        final String browser = Configs.browser;
+        return launchBrowser(browser);
+    }
+
+    /****
+     * Description : this function will launch the browser, based on input Usage : parameter : browser browser name
+     */
+    public WebDriver launchBrowser(final String browser) {
+        DriverFactory.initDriver(browser);
+        DriverFactory.getDriver().manage().window().maximize();
+        return DriverFactory.getDriver();
+    }
+
+}

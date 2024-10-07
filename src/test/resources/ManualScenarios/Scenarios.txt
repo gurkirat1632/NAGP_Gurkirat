@@ -1,0 +1,5 @@
+1) Scenario 1: Naviagte to bus page and verify Bus tab
+2) Scenario 2: Check Bus search
+3) Scenario 3: CHeck help functionality on Bus tab
+
+

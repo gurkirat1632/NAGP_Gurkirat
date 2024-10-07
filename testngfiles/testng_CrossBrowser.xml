@@ -1,0 +1,34 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="MyArtifactSuite" parallel="classes" thread-count="2">
+    <listeners>
+        <listener class-name="com.nagarro.utils.reporting.TNGListener"/>
+    </listeners>
+
+    <test name="Regression Chrome">
+        <parameter name="browser" value="Chrome"/>
+        <groups>
+            <run>
+                <include name="Regression"/>
+            </run>
+        </groups>
+
+        <classes>
+            <class name="com.nagarro.tests.BusTest"/>
+            <class name="com.nagarro.tests.TrainTest"/>
+        </classes>
+    </test>
+
+    <test name="Regression Firefox">
+        <parameter name="browser" value="firefox"/>
+        <groups>
+            <run>
+                <include name="Regression"/>
+            </run>
+        </groups>
+
+        <classes>
+            <class name="com.nagarro.tests.BusTest"/>
+            <class name="com.nagarro.tests.TrainTest"/>
+        </classes>
+    </test>
+</suite>
