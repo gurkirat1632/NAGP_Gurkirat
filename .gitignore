@@ -1,3 +1,4 @@
+# Maven-specific files
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -6,12 +7,29 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
+
+# Maven wrapper files
 .mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
-.classpath
+
+# IntelliJ IDEA files
 .idea/
+*.iml
+*.ipr
+
+# Eclipse-specific files
+.classpath
 .project
 .settings/
-Results/
+
+# Generated test result directories
 test-output/
+Results/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
