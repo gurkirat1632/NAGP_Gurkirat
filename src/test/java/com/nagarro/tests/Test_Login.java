@@ -33,6 +33,36 @@ public class Test_Login extends BaseClass {
 
     }
 
+    @Test(groups = "Regression")
+    public void verifyLoginWithOtherUser() {
+        test = startTest("Login Test", "Checking user can login with standard user");
+        test.assignCategory("Bus Booking");
+        loginPage.setUserName(Configs.getPropertyInputData("username"));
+        loginPage.setPassword(Configs.getPropertyInputData("password"));
+        proPage = loginPage.clickLogin();
+        if (proPage.verifyUserOnProductsPage()) {
+            logger.logPass("Login of standard user successfully verified");
+        } else {
+            logger.logFail("Login of standard user is NOT successfully verified");
+        }
+
+    }
+
+    @Test(groups = "Regression")
+    public void verifyLoginWithInvalidUser() {
+        test = startTest("Login Test", "Checking user can login with standard user");
+        test.assignCategory("Bus Booking");
+        loginPage.setUserName(Configs.getPropertyInputData("username"));
+        loginPage.setPassword(Configs.getPropertyInputData("password"));
+        proPage = loginPage.clickLogin();
+        if (proPage.verifyUserOnProductsPage()) {
+            logger.logPass("Login of standard user successfully verified");
+        } else {
+            logger.logFail("Login of standard user is NOT successfully verified");
+        }
+
+    }
+
     @AfterClass
     public void afterClass() {
 
