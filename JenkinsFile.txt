@@ -1,0 +1,19 @@
+node{
+    try{
+        stage('Checkout'){
+            echo 'cloning the repo'
+            git branch: 'master' ,url:'https://github.com/gurkirat1632/NAGP_Gurkirat.git'
+        }
+        stage('Test'){
+            echo 'running tests'
+            bat 'mvn clean test'
+        }
+        
+        echo '********BUILD SUCCESS**********'
+        
+    }catch(Exception e){
+        echo '********BUILD FAILED**********'
+    }finally{
+        echo '********BUILD COMPLETED FINALLY RUNNING**********'
+    }
+}
