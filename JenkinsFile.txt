@@ -1,19 +1,45 @@
-node{
-    try{
-        stage('Checkout'){
+node {
+    try {
+        stage('Checkout') {
             echo 'cloning the repo'
-            git branch: 'master' ,url:'https://github.com/gurkirat1632/NAGP_Gurkirat.git'
+            git branch: 'master', url: 'https://github.com/gurkirat1632/NAGP_Gurkirat.git'
         }
-        stage('Test'){
+
+        stage('Test') {
             echo 'running tests'
             bat 'mvn clean test'
         }
-        
+
+        stage('Sonar Analysis') {
+            withSonarQubeEnv('Test_SonarQube_Gurkirat') {
+                bat "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar"
+            }
+        }
+
+        stage('Publish to Artifactory') {
+            rtMavenDeployer(
+                id: 'deployer',
+                serverId: 'gurkirat1632@artifactory',
+                releaseRepo: 'nagp.gurkirat.assignment',
+                snapshotRepo: 'nagp.gurkirat.assignment'
+            )
+            
+            rtMavenRun(
+                pom: 'pom.xml',
+                goals: 'clean install',
+                deployerId: 'deployer'
+            )
+            
+            rtPublishBuildInfo(
+                serverId: 'gurkirat1632@artifactory'
+            )
+        }
+
         echo '********BUILD SUCCESS**********'
-        
-    }catch(Exception e){
+    } catch (Exception e) {
         echo '********BUILD FAILED**********'
-    }finally{
+        echo "Error: ${e.getMessage()}"
+    } finally {
         echo '********BUILD COMPLETED FINALLY RUNNING**********'
     }
 }
