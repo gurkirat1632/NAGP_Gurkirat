@@ -35,7 +35,7 @@ public class Test_Login extends BaseClass {
 
     @Test(groups = "Regression")
     public void verifyLoginWithOtherUser() {
-        test = startTest("Login Test", "Checking user can login with standard user");
+        test = startTest("Login Test", "Checking user can login with admin user");
         test.assignCategory("Bus Booking");
         loginPage.setUserName(Configs.getPropertyInputData("username"));
         loginPage.setPassword(Configs.getPropertyInputData("password"));
@@ -50,7 +50,7 @@ public class Test_Login extends BaseClass {
 
     @Test(groups = "Regression")
     public void verifyLoginWithInvalidUser() {
-        test = startTest("Login Test", "Checking user can login with standard user");
+        test = startTest("Login Test", "Checking user can login with Light user");
         test.assignCategory("Bus Booking");
         loginPage.setUserName(Configs.getPropertyInputData("username"));
         loginPage.setPassword(Configs.getPropertyInputData("password"));
